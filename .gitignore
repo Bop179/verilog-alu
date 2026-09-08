@@ -1,0 +1,8 @@
+build/
+*.out
+*.vcd
+*.fst
+.DS_Store
+
+# Local planning artifact from the /interview skill -- not part of the project.
+SPEC.md

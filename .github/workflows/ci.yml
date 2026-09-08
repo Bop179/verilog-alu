@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  simulate:
+    name: simulate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Icarus Verilog
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq iverilog
+      - name: Exhaustive widths
+        run: make exhaustive
+      - name: Random widths
+        run: make random
+
+  synthesize:
+    name: synthesize
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Yosys
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq yosys
+      - name: Gate count vs WIDTH
+        run: make synth

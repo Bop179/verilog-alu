@@ -1,0 +1,25 @@
+# This project is deliberately plain Verilog-2001, not SystemVerilog, so it reads
+# like the textbook and elaborates in any tool.  Every rule disabled here exists
+# only to push code toward SystemVerilog idioms.
+
+# `localparam int OP_ADD` -- typed parameters are SystemVerilog.
+-explicit-parameter-storage-type
+# `always_comb` -- SystemVerilog.  `always @(*)` is the Verilog-2001 spelling.
+-always-comb
+# `reg x [N]` -- the compact unpacked-array form is SystemVerilog.
+-unpacked-dimensions-range-ordering
+# `function automatic` / `task automatic` -- lifetimes are SystemVerilog.
+-explicit-function-lifetime
+-explicit-task-lifetime
+# `$urandom` is SystemVerilog.  `$random(seed)` is Verilog-2001 and, unlike
+# $urandom, takes an explicit seed -- which is what makes runs reproducible.
+-invalid-system-task-function
+# `$value$plusargs` is for plusargs that carry a value.  +dump is a bare flag,
+# so `$test$plusargs` is the correct call.
+-plusarg-assignment
+# The opcode and flag tables in the header comments are wider than 100 columns.
+-line-length
+# Wants CamelCase localparams (`OpAdd`).  SCREAMING_SNAKE_CASE is the near
+# universal Verilog convention for constants, and it is what every ALU
+# reference you would compare this against uses.
+-parameter-name-style
