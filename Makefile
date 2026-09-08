@@ -52,10 +52,13 @@ synth: | $(BUILD)
 	@for w in $(SYN_WIDTHS); do \
 	  yosys -p "read_verilog -sv $(RTL); chparam -set WIDTH $$w alu; \
 	            synth -top alu -flatten; stat" > $(BUILD)/synth_w$$w.log 2>&1 \
-	    || { echo "yosys failed at WIDTH=$$w -- see $(BUILD)/synth_w$$w.log"; exit 1; }; \
-	  awk -v w=$$w '/^ *[0-9]+ cells$$/ {c=$$1} \
-	       END {if (c=="") {print "no cell count in log"; exit 1}; \
-	            printf "%8d %10d %11.1f\n", w, c, c/w}' $(BUILD)/synth_w$$w.log || exit 1; \
+	    || { echo "yosys failed at WIDTH=$$w:"; tail -20 $(BUILD)/synth_w$$w.log; exit 1; }; \
+	  awk -v w=$$w '/Number of cells:/ {c=$$NF} \
+	                /^[[:space:]]*[0-9]+[[:space:]]+cells$$/ {c=$$1} \
+	       END {if (c == "") exit 1; printf "%8d %10d %11.1f\n", w, c, c/w}' \
+	       $(BUILD)/synth_w$$w.log \
+	    || { echo "no cell count at WIDTH=$$w; yosys said:"; \
+	         tail -20 $(BUILD)/synth_w$$w.log; exit 1; }; \
 	done
 
 wave: | $(BUILD)
