@@ -168,6 +168,11 @@ A test suite that has only ever been green is not evidence that it works.
 | 16 | 511 | 31.9 |
 | 32 | 1087 | 34.0 |
 
+Those are Yosys 0.68. Absolute counts move with the Yosys version — the CI
+runner's older packaged build reports 125 / 260 / 540 for the same source,
+because its optimisation passes differ. Treat the shape as the result, not the
+digits; re-run `make synth` for numbers that match your own toolchain.
+
 Cost is close to linear in `WIDTH`, which is what you would expect from a ripple
 adder and eight bitwise operations. The slow climb in cells per bit — 29.8 up to
 34.0 — is the barrel shifter, which grows as O(*W* log *W*) rather than O(*W*):
